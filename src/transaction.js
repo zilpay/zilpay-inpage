@@ -6,7 +6,7 @@
  * -----
  * Copyright (c) 2019 ZilPay
  */
-import { DEFAULT_GAS_FEE } from 'config/zilliqa'
+import { DEFAULT_GAS_FEE } from './config'
 import { TransactionError } from '@zilliqa-js/core/dist/types'
 import HTTPProvider from './provider'
 import { CryptoUtils, ZilliqaUtils } from './crypto'

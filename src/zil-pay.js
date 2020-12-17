@@ -6,7 +6,7 @@
  * -----
  * Copyright (c) 2019 ZilPay
  */
-import { TypeChecker } from 'lib/type'
+import { TypeChecker } from './lib/type'
 import HTTPProvider from './provider'
 import Wallet from './wallet'
 import { ContractControl } from './contract'

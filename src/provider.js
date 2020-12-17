@@ -12,12 +12,7 @@ import { RPCMethod } from '@zilliqa-js/core/dist/net'
 import { from } from 'rxjs'
 import { filter, take, map } from 'rxjs/operators'
 
-import { TypeChecker } from 'lib/type'
-import {
-  SecureMessage,
-  MTypeTabContent,
-  MTypeTab
-} from 'lib/stream'
+import { TypeChecker } from './lib/type'
 
 // Private variables. //
 /**
@@ -60,15 +55,15 @@ export default class HTTPProvider {
       return { error: null, result: {} }
     }
 
-    const type = MTypeTab.CONTENT_PROXY_MEHTOD
-    const recipient = MTypeTabContent.CONTENT
+    // const type = MTypeTab.CONTENT_PROXY_MEHTOD
+    // const recipient = MTypeTabContent.CONTENT
     // Request id.
     const uuid = v4()
 
     // Send to content.js
-    new SecureMessage({
-      type, payload: { params, method, uuid }
-    }).send(_stream, recipient)
+    // new SecureMessage({
+    //   type, payload: { params, method, uuid }
+    // }).send(_stream, recipient)
 
     // Waiting for an answer from content.js.
     return from(_subject).pipe(

@@ -16,7 +16,7 @@ const utils = new CryptoUtils()
  */
 export function getFavicon() {
   try {
-    return document.querySelector('link[rel*=\'icon\']').href
+    return document.querySelector('link[rel*=\'icon\']')['href']
   } catch (err) {
     return null
   }

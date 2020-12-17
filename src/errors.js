@@ -15,7 +15,7 @@ import {
   CONTRACT_HASN_TDEPLOYED,
   MUST_BE_OBJECT,
   MUST_BE_STRING
-} from 'lib/errors/annotations'
+} from './lib/errors/annotations'
 
 export const ERROR_MSGS = {
   REQUIRED,
@@ -28,4 +28,4 @@ export const ERROR_MSGS = {
   MUST_BE_STRING
 }
 
-export * from 'lib/errors'
+export * from './lib/errors'

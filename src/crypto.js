@@ -30,8 +30,10 @@ export class Validator {
 
 export class CryptoUtils {
 
-  isValidChecksumAddress = isValidChecksumAddress
-  fromBech32Address = fromBech32Address
+  constructor() {
+    this.isValidChecksumAddress = isValidChecksumAddress
+    this.fromBech32Address = fromBech32Address
+  }
 
   toHex(hexString) {
     return String(hexString).replace('0x', '').toLowerCase()
