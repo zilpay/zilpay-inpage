@@ -9,6 +9,7 @@
 import { Subject } from 'rxjs'
 import { MESSAGE_TYPES } from './config/messages'
 import { Message } from './lib/messager'
+const { window } = global
 
 export default class Handler {
 
@@ -17,13 +18,34 @@ export default class Handler {
     this.subjectStream = new Subject()
   }
 
+  _init() {
+    window.addEventListener('message', (e) => {
+      if (!e || !e.data) {
+        return null
+      }
+
+      try {
+        const msg = JSON.parse(e.data);
+
+        this.subjectStream.next(msg);
+      } catch (err) {
+        alert(err.message);
+      }
+    }, false)
+    Message.signal(MESSAGE_TYPES.init)
+  }
+
   /**
    * When injected script was initialized
    * for wallet need some data about account and network.
    */
   initialized() {
-    const type = MESSAGE_TYPES.wallet
-
-    Message.signal(type)
+    try {
+      this._init()
+    } catch (err) {
+      setTimeout(() => {
+        this._init()
+      }, 50)
+    }
   }
 }

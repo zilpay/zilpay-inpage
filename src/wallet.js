@@ -23,12 +23,11 @@ const { window, Promise, Set } = global
 
 // Private variables. //
 const _paddingTransactions = new Set()
-let _stream = null // Stream instance.
 let _subject = null // Listener instance.
 let _defaultAccount = null
-let _isConnect = false
-let _isEnable = false
-let _net = null
+let _isConnect = true
+let _isEnable = true
+let _net = 'mainnet'
 // Private variables. //
 
 function _answer(payload, uuid) {
@@ -109,8 +108,7 @@ export default class Wallet {
     return _defaultAccount
   }
 
-  constructor(subjectStream, stream) {
-    _stream = stream
+  constructor(subjectStream) {
     _subject = subjectStream
 
     _subject.subscribe(msg => {
@@ -125,10 +123,8 @@ export default class Wallet {
       case MESSAGE_TYPES.wallet:
         _isConnect = msg.payload.isConnect
         _isEnable = msg.payload.isEnable
-        _net = msg.payload.net
-        if (_isEnable && msg.payload.account && msg.payload.account.address) {
-          _defaultAccount = toAccountFormat(msg.payload.account.address)
-        }
+        _net = msg.payload.netwrok
+        _defaultAccount = msg.payload.account
         break
 
       case MESSAGE_TYPES.status:

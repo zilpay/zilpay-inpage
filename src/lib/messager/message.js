@@ -12,16 +12,6 @@ import { getFavicon } from '../../utils'
 
 const { window, ReactNativeWebView } = global
 
-/**
- * Message class can send payload or make signal message.
- * @example
- * import { Message } from 'lib/stream/message'
- * const msg = { type: '@example/type', payload: { test: 1} }
- * const message = new Message(msg)
- * message.send().then(() => / Do something... /)
- * or
- * Message.signal('@example/type').send().then(() => / Do something... /)
- */
 export class Message {
 
   /**
