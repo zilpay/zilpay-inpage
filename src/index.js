@@ -14,7 +14,7 @@ const { window } = global
 // Create handler stream.
 const handler = new Handler()
 // Init ZilPay object with some methods and properties.
-const zilPay = new ZilPay(handler.subjectStream, handler.stream)
+const zilPay = new ZilPay(handler.subjectStream)
 
 // Request for state(network, accounts).
 handler.initialized()

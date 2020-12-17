@@ -13,12 +13,10 @@ import { from } from 'rxjs'
 import { filter, take, map } from 'rxjs/operators'
 
 import { TypeChecker } from './lib/type'
+import { MESSAGE_TYPES } from './config/messages'
+import { Message } from './lib/messager'
 
 // Private variables. //
-/**
- * Stream instance.
- */
-let _stream = null
 /**
  * Listener instance.
  */
@@ -31,7 +29,7 @@ let _subject = null
  */
 export default class HTTPProvider {
 
-  constructor(subjectStream, stream) {
+  constructor(subjectStream) {
     this.middleware = {
       request: {
         use() {}
@@ -40,7 +38,6 @@ export default class HTTPProvider {
         use() {}
       }
     }
-    _stream = stream
     _subject = subjectStream
 
     this.RPCMethod = RPCMethod
@@ -55,19 +52,22 @@ export default class HTTPProvider {
       return { error: null, result: {} }
     }
 
-    // const type = MTypeTab.CONTENT_PROXY_MEHTOD
+    const type = MESSAGE_TYPES.reqProxy
     // const recipient = MTypeTabContent.CONTENT
     // Request id.
     const uuid = v4()
 
-    // Send to content.js
-    // new SecureMessage({
-    //   type, payload: { params, method, uuid }
-    // }).send(_stream, recipient)
+    new Message({
+      type, payload: {
+        params,
+        method,
+        uuid
+      }
+    }).send()
 
     // Waiting for an answer from content.js.
     return from(_subject).pipe(
-      filter(res => res.type === MTypeTab.CONTENT_PROXY_RESULT),
+      filter(res => res.type === MESSAGE_TYPES.resProxy),
       map(res => res.payload),
       filter(res => res.uuid && res.uuid === uuid),
       map(res => {

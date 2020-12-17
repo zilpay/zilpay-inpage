@@ -16,6 +16,8 @@ import { getFavicon, toAccountFormat } from './utils'
 import { CryptoUtils } from './crypto'
 import { InstanceError, AccessError, ERROR_MSGS } from './errors'
 import { Transaction } from './transaction'
+import { MESSAGE_TYPES } from './config/messages'
+import { Message } from './lib/messager'
 
 const { window, Promise, Set } = global
 
@@ -32,7 +34,7 @@ let _net = null
 function _answer(payload, uuid) {
   return from(_subject).pipe(
     // Waiting an answer by uuid.
-    // filter(res => res.type === MTypeTab.TX_RESULT),
+    filter(res => res.type === MESSAGE_TYPES.signResult),
     map(res => res.payload),
     filter(res => res.uuid && res.uuid === uuid),
     map(res => {
@@ -53,8 +55,7 @@ function _transaction(tx) {
     return Promise.reject(new InstanceError('tx', Transaction))
   }
 
-  // const type = MTypeTab.CALL_TO_SIGN_TX
-  // const recipient = MTypeTabContent.CONTENT
+  const type = MESSAGE_TYPES.signTx
   const uuid = v4()
   const { payload } = tx
 
@@ -65,27 +66,22 @@ function _transaction(tx) {
   // Url on favicon by current tab.
   payload.icon = getFavicon()
 
-  // Send transaction to content.js > background.js.
-  // new SecureMessage({ type, payload }).send(_stream, recipient)
+  new Message({ type, payload }).send()
 
   return _answer(payload, uuid)
 }
 
 function _message(message) {
-  // const type = MTypeTab.SIGN_MESSAGE
-  // const recipient = MTypeTabContent.CONTENT
+  const type = MESSAGE_TYPES.signMessage
   const uuid = v4()
-  const title = window.document.title
   const icon = getFavicon()
   const payload = {
     message,
     uuid,
-    title,
     icon
   }
 
-  // Send transaction to content.js > background.js.
-  // new SecureMessage({ type, payload }).send(_stream, recipient)
+  new Message({ type, payload }).send()
 
   return _answer(payload, uuid)
     .then((res) => ({
@@ -120,31 +116,31 @@ export default class Wallet {
     _subject.subscribe(msg => {
       switch (msg.type) {
 
-      // case MTypeTab.ADDRESS_CHANGED:
-      //   if (_isEnable && msg.payload.address) {
-      //     _defaultAccount = toAccountFormat(msg.payload.address)
-      //   }
-      //   break
+      case MESSAGE_TYPES.account:
+        if (_isEnable && msg.payload.address) {
+          _defaultAccount = toAccountFormat(msg.payload.address)
+        }
+        break
 
-      // case MTypeTab.GET_WALLET_DATA:
-      //   _isConnect = msg.payload.isConnect
-      //   _isEnable = msg.payload.isEnable
-      //   _net = msg.payload.net
-      //   if (_isEnable && msg.payload.account && msg.payload.account.address) {
-      //     _defaultAccount = toAccountFormat(msg.payload.account.address)
-      //   }
-      //   break
+      case MESSAGE_TYPES.wallet:
+        _isConnect = msg.payload.isConnect
+        _isEnable = msg.payload.isEnable
+        _net = msg.payload.net
+        if (_isEnable && msg.payload.account && msg.payload.account.address) {
+          _defaultAccount = toAccountFormat(msg.payload.account.address)
+        }
+        break
 
-      // case MTypeTab.LOCK_STAUS:
-      //   _isEnable = msg.payload.isEnable
-      //   if (_isEnable && msg.payload.account && msg.payload.account.address) {
-      //     _defaultAccount = toAccountFormat(msg.payload.account.address)
-      //   }
-      //   break
+      case MESSAGE_TYPES.status:
+        _isEnable = msg.payload.isEnable
+        if (_isEnable && msg.payload.account && msg.payload.account.address) {
+          _defaultAccount = toAccountFormat(msg.payload.account.address)
+        }
+        break
 
-      // case MTypeTab.NETWORK_CHANGED:
-      //   _net = msg.payload.net
-      //   break
+      case MESSAGE_TYPES.netwrok:
+        _net = msg.payload.net
+        break
 
       default:
         break
@@ -170,11 +166,11 @@ export default class Wallet {
           return _defaultAccount
         }
 
-        // if (msg.type === MTypeTab.GET_WALLET_DATA || msg.type === MTypeTab.LOCK_STAUS) {
-        //   _defaultAccount = toAccountFormat(msg.payload.account.address)
-        // } else if (msg.type === MTypeTab.ADDRESS_CHANGED) {
-        //   _defaultAccount = toAccountFormat(msg.payload.address)
-        // }
+        if (msg.type === MESSAGE_TYPES.wallet || msg.type === MESSAGE_TYPES.status) {
+          _defaultAccount = toAccountFormat(msg.payload.account.address)
+        } else if (msg.type === MESSAGE_TYPES.account) {
+          _defaultAccount = toAccountFormat(msg.payload.address)
+        }
 
         return _defaultAccount
       }),
@@ -197,7 +193,7 @@ export default class Wallet {
     }
 
     return from(_subject).pipe(
-      // filter(msg => msg && (msg.type === MTypeTab.NETWORK_CHANGED || msg.type === MTypeTab.GET_WALLET_DATA)),
+      filter(msg => msg && (msg.type === MESSAGE_TYPES.netwrok || msg.type === MESSAGE_TYPES.wallet)),
       map(msg => msg.payload.net)
     )
   }
@@ -213,7 +209,7 @@ export default class Wallet {
     }
 
     return from(_subject).pipe(
-      // filter((msg) => msg && (msg.type === MTypeTab.NEW_BLOCK)),
+      filter((msg) => msg && (msg.type === MESSAGE_TYPES.block)),
       map((msg) => msg.payload.block)
     )
   }
@@ -276,15 +272,14 @@ export default class Wallet {
    * this method need for show user info such as your address.
    */
   async connect() {
-    // const type = MTypeTab.CONNECT_APP
-    // const recipient = MTypeTabContent.CONTENT
+    const type = MESSAGE_TYPES.appConnect
     const uuid = v4()
     const title = window.document.title
     const domain = window.document.domain
     const icon = getFavicon()
     const payload = { title, domain, icon, uuid }
 
-    // new SecureMessage({ type, payload }).send(_stream, recipient)
+    new Message({ type, payload }).send()
 
     const confirmPayload = await from(_subject).pipe(
       filter(msg => msg.type === MTypeTab.RESPONSE_TO_DAPP),

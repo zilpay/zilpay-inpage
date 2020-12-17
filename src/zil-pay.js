@@ -22,15 +22,15 @@ import { ERROR_MSGS } from './errors'
 */
 export class ZilPay {
 
-  constructor(subjectStream, stream) {
-    if (!subjectStream || !stream) {
-      throw new Error('subjectStream and stream is required.')
+  constructor(subjectStream) {
+    if (!subjectStream) {
+      throw new Error('subjectStream is required.')
     }
 
     // Create instance Proxy provider.
-    this.provider = new HTTPProvider(subjectStream, stream)
+    this.provider = new HTTPProvider(subjectStream)
     // Redefined Wallet to work with user interface.
-    this.wallet = new Wallet(subjectStream, stream)
+    this.wallet = new Wallet(subjectStream)
 
     this.blockchain = new Blockchain(this.provider, this.wallet)
     this.transactions = new TransactionFactory(this.provider, this.wallet)

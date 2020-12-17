@@ -7,24 +7,14 @@
  * Copyright (c) 2019 ZilPay
  */
 import { Subject } from 'rxjs'
+import { MESSAGE_TYPES } from './config/messages'
+import { Message } from './lib/messager'
 
 export default class Handler {
 
   constructor() {
-    // Stream with content.js
-    this.stream = null
     // Event listener.
     this.subjectStream = new Subject()
-
-    this._init() // Init stream.
-  }
-
-  /**
-   * Creating `instance observable` for listing event from content.
-   */
-  _init() {
-    // this.stream = new TabStream(MTypeTabContent.INJECTED)
-    // this.stream.listen().subscribe(msg => this.subjectStream.next(msg))
   }
 
   /**
@@ -32,10 +22,8 @@ export default class Handler {
    * for wallet need some data about account and network.
    */
   initialized() {
-    // const type = MTypeTab.GET_WALLET_DATA
-    // const recipient = MTypeTabContent.CONTENT
+    const type = MESSAGE_TYPES.wallet
 
-    // new SecureMessage({ type, payload: {} })
-    //   .send(this.stream, recipient)
+    Message.signal(type)
   }
 }
