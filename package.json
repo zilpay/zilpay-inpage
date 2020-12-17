@@ -1,0 +1,10 @@
+{
+  "name": "zilpay-inpage",
+  "version": "1.0.0",
+  "description": "ZilPay inject script",
+  "main": "index.js",
+  "repository": "git@github.com:zilpay/zilpay-inpage.git",
+  "author": "Rinat <lich666black@gmail.com>",
+  "license": "MIT",
+  "private": false
+}
