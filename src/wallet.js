@@ -259,16 +259,16 @@ export default class Wallet {
     const confirmPayload = await from(_subject).pipe(
       filter(msg => msg.type === MESSAGE_TYPES.resConnect),
       map(res => res.payload),
-      filter(data => data.uuid && data.uuid === uuid),
+      filter(payload => payload.uuid && payload.uuid === uuid),
       take(1)
     ).toPromise()
 
-    if (confirmPayload && confirmPayload.confirm) {
-      _isConnect = confirmPayload.confirm
-      _defaultAccount = confirmPayload.account
+    if (confirmPayload && confirmPayload.data.confirm) {
+      _isConnect = confirmPayload.data.confirm
+      _defaultAccount = confirmPayload.data.account
     }
 
-    return confirmPayload.confirm
+    return confirmPayload.data.confirm
   }
 
 }
