@@ -29,7 +29,7 @@ export default class Handler {
 
         this.subjectStream.next(msg);
       } catch (err) {
-        alert(err.message);
+        //
       }
     }, false)
     Message.signal(MESSAGE_TYPES.init)
