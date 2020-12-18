@@ -12,7 +12,7 @@ import { from } from 'rxjs'
 
 import { TypeChecker } from './lib/type'
 
-import { getFavicon, toAccountFormat } from './utils'
+import { getFavicon } from './utils'
 import { CryptoUtils } from './crypto'
 import { InstanceError, AccessError, ERROR_MSGS } from './errors'
 import { Transaction } from './transaction'
@@ -114,28 +114,11 @@ export default class Wallet {
     _subject.subscribe(msg => {
       switch (msg.type) {
 
-      case MESSAGE_TYPES.account:
-        if (_isEnable && msg.payload.address) {
-          _defaultAccount = toAccountFormat(msg.payload.address)
-        }
-        break
-
       case MESSAGE_TYPES.wallet:
-        _isConnect = msg.payload.isConnect
-        _isEnable = msg.payload.isEnable
-        _net = msg.payload.netwrok
-        _defaultAccount = msg.payload.account
-        break
-
-      case MESSAGE_TYPES.status:
-        _isEnable = msg.payload.isEnable
-        if (_isEnable && msg.payload.account && msg.payload.account.address) {
-          _defaultAccount = toAccountFormat(msg.payload.account.address)
-        }
-        break
-
-      case MESSAGE_TYPES.netwrok:
-        _net = msg.payload.net
+        _isConnect = msg.payload.data.isConnect
+        _isEnable = msg.payload.data.isEnable
+        _net = msg.payload.data.netwrok
+        _defaultAccount = msg.payload.data.account
         break
 
       default:
@@ -162,13 +145,9 @@ export default class Wallet {
           return _defaultAccount
         }
 
-        if (msg.type === MESSAGE_TYPES.wallet || msg.type === MESSAGE_TYPES.status) {
-          _defaultAccount = toAccountFormat(msg.payload.account.address)
-        } else if (msg.type === MESSAGE_TYPES.account) {
-          _defaultAccount = toAccountFormat(msg.payload.address)
+        if (msg.type === MESSAGE_TYPES.wallet) {
+          return msg.payload.data.account;
         }
-
-        return _defaultAccount
       }),
       filter(account => account && lastAccount !== account.base16),
       map(account => {
@@ -189,8 +168,8 @@ export default class Wallet {
     }
 
     return from(_subject).pipe(
-      filter(msg => msg && (msg.type === MESSAGE_TYPES.netwrok || msg.type === MESSAGE_TYPES.wallet)),
-      map(msg => msg.payload.net)
+      filter(msg => msg && msg.type === MESSAGE_TYPES.wallet),
+      map(msg => msg.payload.data.netwrok)
     )
   }
 
@@ -206,7 +185,7 @@ export default class Wallet {
 
     return from(_subject).pipe(
       filter((msg) => msg && (msg.type === MESSAGE_TYPES.block)),
-      map((msg) => msg.payload.block)
+      map((msg) => msg.payload.data.block)
     )
   }
 
@@ -278,7 +257,7 @@ export default class Wallet {
     new Message({ type, payload }).send()
 
     const confirmPayload = await from(_subject).pipe(
-      filter(msg => msg.type === MTypeTab.RESPONSE_TO_DAPP),
+      filter(msg => msg.type === MESSAGE_TYPES.resConnect),
       map(res => res.payload),
       filter(data => data.uuid && data.uuid === uuid),
       take(1)
@@ -286,7 +265,7 @@ export default class Wallet {
 
     if (confirmPayload && confirmPayload.confirm) {
       _isConnect = confirmPayload.confirm
-      _defaultAccount = toAccountFormat(confirmPayload.account.address)
+      _defaultAccount = confirmPayload.account
     }
 
     return confirmPayload.confirm

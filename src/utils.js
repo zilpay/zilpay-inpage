@@ -21,13 +21,3 @@ export function getFavicon() {
     return null
   }
 }
-
-/**
- * Replace from base16 to (base16, beach32).
- */
-export function toAccountFormat(address) {
-  return {
-    base16: utils.toChecksumAddress(address),
-    bech32: utils.toBech32Address(address)
-  }
-}
