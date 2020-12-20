@@ -56,15 +56,13 @@ function _transaction(tx) {
 
   const type = MESSAGE_TYPES.signTx
   const uuid = v4()
-  const { payload } = tx
+  const payload = {
+    uuid,
+    data: tx.payload
+  }
 
   // Transaction id.
   payload.uuid = uuid
-  // Current tab title.
-  payload.title = window.document.title
-  // Url on favicon by current tab.
-  payload.icon = getFavicon()
-
   new Message({ type, payload }).send()
 
   return _answer(payload, uuid)
