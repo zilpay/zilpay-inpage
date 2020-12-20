@@ -37,13 +37,13 @@ function _answer(payload, uuid) {
     map(res => res.payload),
     filter(res => res.uuid && res.uuid === uuid),
     map(res => {
-      if (res.reject) {
-        throw res.reject
-      } else if (res.resolve && new TypeChecker(res.resolve).isObject) {
-        return Object.assign(payload, res.resolve)
+      if (res.data.reject) {
+        throw res.data.reject
+      } else if (res.data.resolve && new TypeChecker(res.data.resolve).isObject) {
+        return Object.assign(payload, res.data.resolve)
       }
 
-      return res.resolve
+      return res.data.resolve
     }),
     take(1)
   ).toPromise()
@@ -73,11 +73,9 @@ function _transaction(tx) {
 function _message(message) {
   const type = MESSAGE_TYPES.signMessage
   const uuid = v4()
-  const icon = getFavicon()
   const payload = {
-    message,
-    uuid,
-    icon
+    data: message,
+    uuid
   }
 
   new Message({ type, payload }).send()
