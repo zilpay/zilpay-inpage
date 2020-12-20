@@ -9,7 +9,6 @@
 import { CryptoUtils } from './crypto'
 
 const { document } = global
-const utils = new CryptoUtils()
 
 /**
  * Get the favicon from current tab.

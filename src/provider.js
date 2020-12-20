@@ -41,9 +41,6 @@ export default class HTTPProvider {
     _subject = subjectStream
 
     this.RPCMethod = RPCMethod
-
-    this.RPCMethod.GetMinerInfo = 'GetMinerInfo'
-    this.RPCMethod.GetPendingTxns = 'GetPendingTxns'
   }
 
   send(method, ...params) {
@@ -53,15 +50,17 @@ export default class HTTPProvider {
     }
 
     const type = MESSAGE_TYPES.reqProxy
-    // const recipient = MTypeTabContent.CONTENT
     // Request id.
     const uuid = v4()
 
     new Message({
-      type, payload: {
-        params,
-        method,
-        uuid
+      type,
+      payload: {
+        uuid,
+        data: {
+          params,
+          method
+        }
       }
     }).send()
 
@@ -70,14 +69,14 @@ export default class HTTPProvider {
       filter(res => res.type === MESSAGE_TYPES.resProxy),
       map(res => res.payload),
       filter(res => res.uuid && res.uuid === uuid),
-      map(res => {
-        if (res.error) {
-          throw res.error
+      map(payload => {
+        if (payload.data.error) {
+          throw payload.data.error
         }
 
-        delete res.uuid
+        delete payload.uuid
 
-        return res
+        return payload.data
       }),
       take(1)
     ).toPromise()

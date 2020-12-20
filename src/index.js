@@ -6,8 +6,11 @@
  * -----
  * Copyright (c) 2019 ZilPay
  */
+import { Buffer } from 'buffer'
 import Handler from './handler'
 import { ZilPay } from './zil-pay'
+
+global.Buffer = Buffer
 
 const { window } = global
 

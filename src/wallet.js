@@ -249,10 +249,7 @@ export default class Wallet {
   async connect() {
     const type = MESSAGE_TYPES.appConnect
     const uuid = v4()
-    const title = window.document.title
-    const domain = window.document.domain
-    const icon = getFavicon()
-    const payload = { title, domain, icon, uuid }
+    const payload = { uuid }
 
     new Message({ type, payload }).send()
 
