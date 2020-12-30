@@ -9,7 +9,7 @@
 import { Subject } from 'rxjs'
 import { MESSAGE_TYPES } from './config/messages'
 import { Message } from './lib/messager'
-const { window } = global
+const { document } = global
 
 export default class Handler {
 
@@ -19,7 +19,7 @@ export default class Handler {
   }
 
   _init() {
-    window.addEventListener('message', (e) => {
+    document.addEventListener('message', (e) => {
       if (!e || !e.data) {
         return null
       }
