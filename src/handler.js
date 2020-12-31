@@ -9,7 +9,7 @@
 import { Subject } from 'rxjs'
 import { MESSAGE_TYPES } from './config/messages'
 import { Message } from './lib/messager'
-const { document } = global
+const { document, window } = global
 
 export default class Handler {
 
@@ -20,6 +20,19 @@ export default class Handler {
 
   _init() {
     document.addEventListener('message', (e) => {
+      if (!e || !e.data) {
+        return null
+      }
+
+      try {
+        const msg = JSON.parse(e.data);
+
+        this.subjectStream.next(msg);
+      } catch (err) {
+        //
+      }
+    }, false)
+    window.addEventListener('message', (e) => {
       if (!e || !e.data) {
         return null
       }
@@ -45,7 +58,7 @@ export default class Handler {
     } catch (err) {
       setTimeout(() => {
         this._init()
-      }, 50)
+      }, 100)
     }
   }
 }
