@@ -8,9 +8,9 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "@zilliqa-js/core": "^1.0.0",
-    "@zilliqa-js/crypto": "^1.0.0",
-    "@zilliqa-js/util": "^0.11.1",
+    "@zilliqa-js/core": "^2.2.1",
+    "@zilliqa-js/crypto": "^2.2.1",
+    "@zilliqa-js/util": "^2.2.0",
     "buffer": "^6.0.3",
     "rxjs": "^6.6.3"
   },
