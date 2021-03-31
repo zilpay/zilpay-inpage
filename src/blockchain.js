@@ -85,6 +85,26 @@ export class Blockchain {
     return new Transaction(result)
   }
 
+  async getTransactionStatus(hash) {
+    if (!hash) {
+      throw new ArgumentError('hash', ERROR_MSGS.REQUIRED)
+    }
+
+    const fixedhash = cryptoUtils.toHex(hash)
+    const { RPCMethod } = this.provider
+
+    const { error, result } = await this.provider.send(
+      RPCMethod.GetTransactionStatus,
+      String(fixedhash)
+    )
+
+    if (error) {
+      throw new RPCError(error)
+    }
+
+    return new Transaction(result)
+  }
+
   /**
    * getRecentTransactions
    *
