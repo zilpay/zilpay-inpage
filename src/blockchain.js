@@ -85,6 +85,11 @@ export class Blockchain {
     return new Transaction(result)
   }
 
+  /**
+   * Show the Tx information in queue.
+   * @param {String} hash - hash of transaction in queue.
+   * @returns {Promise<object>}
+   */
   async getTransactionStatus(hash) {
     if (!hash) {
       throw new ArgumentError('hash', ERROR_MSGS.REQUIRED)
